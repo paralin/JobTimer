@@ -52,6 +52,7 @@ var port = process.env.PORT || 8080;
 //      callback_method: Callback method to use, default GET
 //      callback_data: Callback data to use, default none, valid only for POST,
 //      callback_content_type: Callback content type to use, default none, valid only for POST
+//      initial_expire_time: Initial expire time.
 //   }
 // returns: 201 created or 503 error, or 208 already exists
 app.post("/job/create", function(req, res) {
@@ -137,8 +138,13 @@ app.post("/job/create", function(req, res) {
                 {
                   "name": "JOBTIMER_CALLBACK_DATA_CONTENT_TYPE",
                   "value": req.body.callback_content_type || "application/json"
-                }
-              ]
+                },
+                {
+                  "name": "JOBTIMER_INITIAL_EXPIRE_TIME",
+                  "value": req.body.initial_expire_time || 0
+                },
+              ],
+              "imagePullPolicy": "Always"
             }],
             // "restartPolicy": "Always" consider never
             "restartPolicy": "OnFailure"

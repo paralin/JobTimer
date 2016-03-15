@@ -16,6 +16,7 @@ var settings = {
   callback_data: JSON.parse(process.env.JOBTIMER_CALLBACK_DATA || "null"),
   callback_data_type: process.env.JOBTIMER_CALLBACK_DATA_CONTENT_TYPE || "application/json",
   timestamp_type: parseInt(process.env.JOBTIMER_TIMESTAMP_TYPE || 0)
+  initial_expire_time: parseInt(process.env.JOBTIMER_INITIAL_EXPIRE_TIME || 0)
 };
 
 var wait_until = 0;
@@ -70,4 +71,11 @@ function check_once() {
     }
   });
 }
-check_once();
+var now = Date.now();
+if (settings.initial_expire_time && settings.initial_expire_time > now) {
+  console.log("Waiting until " + settings.initial_expire_time);
+  setTimeout(function() {
+    check_once();
+  }, val - now);
+} else
+  check_once();
