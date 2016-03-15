@@ -140,7 +140,8 @@ app.post("/job/create", function(req, res) {
                 }
               ]
             }],
-            "restartPolicy": "Never"
+            // "restartPolicy": "Always" consider never
+            "restartPolicy": "OnFailure"
           }
         }
       }
