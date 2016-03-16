@@ -142,7 +142,7 @@ app.post("/job/create", function(req, res) {
                 {
                   "name": "JOBTIMER_INITIAL_EXPIRE_TIME",
                   "value": req.body.initial_expire_time || 0
-                },
+                }
               ],
               "imagePullPolicy": "Always"
             }],
@@ -152,6 +152,7 @@ app.post("/job/create", function(req, res) {
         }
       }
     };
+    console.log("POST -> " + jobs_url + " body: " + JSON.stringify(njob));
     r({uri: jobs_url, method: "POST", json: njob}, function(err, resp, body) {
       if (err) return res.status(resp.statusCode).json(err);
       console.log("created job " + req.body.id);
