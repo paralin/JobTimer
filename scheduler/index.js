@@ -141,7 +141,7 @@ app.post("/job/create", function(req, res) {
                 },
                 {
                   "name": "JOBTIMER_INITIAL_EXPIRE_TIME",
-                  "value": req.body.initial_expire_time || 0
+                  "value": (req.body.initial_expire_time || 0) + ""
                 }
               ],
               "imagePullPolicy": "Always"
