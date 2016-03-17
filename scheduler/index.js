@@ -78,7 +78,7 @@ app.post("/job/create", function(req, res) {
         return res.status(208).json({"error": "ID " + req.body.id + " already exists."});
     }
     // It doesn't, create it
-    var jname = "job-timer-" + req.body.id.hashCode();
+    var jname = "job-timer-" + (""+req.body.id.hashCode()).replace(/\W/g, '');
     var njob = {
       metadata: {
         "name": jname,
