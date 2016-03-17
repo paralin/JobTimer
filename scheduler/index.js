@@ -29,8 +29,10 @@ if (!namespace) {
 }
 
 var ndp = client_data.endpoint;
+var v1p = "/api/v1/";
 var extp = "/apis/extensions/v1beta1/";
 var jobs_url = ndp + extp + "namespaces/" + namespace + "/" + "jobs";
+var pods_url = ndp + v1p + "namespaces/" + namespace + "/" + "pods";
 
 var app = express();
 
@@ -193,6 +195,25 @@ app.post("/job/cancel", function(req, res) {
           if (err) return res.status(resp.statusCode).json(err);
           console.log("canceled job " + req.body.id);
           res.status(200).json({});
+          console.log("also attempting to delete any pods...");
+          r.get(pods_url, function(err, resp, body) {
+            var items = JSON.parse(body)["items"];
+            if (err) return;
+            for (var itemx in items) {
+              var item = items[itemx];
+              if (item["metadata"]["labels"]["created-by"] !== createdby) continue;
+              if (item["metadata"]["annotations"]["job-timer/id"] !== req.body.id) continue;
+              console.log("found pod to delete: " + item["metadata"]["name"]);
+              r.del(pods_url + "/" + item["metadata"]["name"], function(err, resp, body) {
+                if (err) {
+                  console.log("was unable to cleanup, " + JSON.stringify(err));
+                  return;
+                }
+                console.log("deleted pod " + item["metadata"]["name"]);
+              });
+              return;
+            }
+          })
         });
         return;
       }
