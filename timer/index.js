@@ -56,9 +56,13 @@ function check_once() {
         req.body = settings.callback_data;
       }
       request(req, function(err, response, body) {
-        if (err) {
-          console.log("Error making callback,  " + JSON.stringify(err));
-          process.exit(1);
+        if (err || response.statusCode != 417) {
+          console.log("Error making callback,  " + JSON.stringify(err) + " status code " + response.statusCode);
+          console.log("Waiting 1 second and then checking again.");
+          setTimeout(function() {
+              check_once();
+          }, 1000);
+          return;
         }
         console.log("Callback complete.");
         process.exit(0);
@@ -76,6 +80,6 @@ if (settings.initial_expire_time && settings.initial_expire_time > now) {
   console.log("Waiting until " + settings.initial_expire_time);
   setTimeout(function() {
     check_once();
-  }, val - now);
+  }, settings.initial_expire_time - now);
 } else
   check_once();
